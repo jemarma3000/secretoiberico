@@ -1,1 +1,83 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class Player {
+  final String name;
+  final bool isConnected;
+
+  Player(this.name, this.isConnected);
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: GroupScreen(),
+    );
+  }
+}
+
+class GroupScreen extends StatelessWidget {
+  final String groupName = 'Grupo de Amigos';
+  final List<Player> players = [
+    Player('Jugador 1', true),
+    Player('Jugador 2', false),
+    Player('Jugador 3', true),
+    Player('Jugador 4', false),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text(groupName)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              // Acción para el botón de ajustes
+            },
+          ),
+        ],
+        leading: IconButton(
+          icon: Icon(Icons.leaderboard),
+          onPressed: () {
+            // Acción para el botón de ranking
+          },
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: players.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    players[index].name,
+                    style: TextStyle(
+                      color: players[index].isConnected ? Colors.green : Colors.grey,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                // Acción para el botón "Todos listos para girar"
+              },
+              child: Text('Todos listos para girar'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
