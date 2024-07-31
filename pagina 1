@@ -1,1 +1,97 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Loading Screen Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: LoadingScreen(),
+    );
+  }
+}
+
+class LoadingScreen extends StatefulWidget {
+  @override
+  _LoadingScreenState createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> with TickerProviderStateMixin {
+  late AnimationController _initialController;
+  late AnimationController _completionController;
+  late Animation<double> _initialAnimation;
+  late Animation<double> _completionAnimation;
+  bool _isCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Primer controlador y animación (0% a 90%)
+    _initialController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 5), // Duración de la primera animación
+    );
+
+    _initialAnimation = Tween<double>(begin: 0, end: 0.9).animate(_initialController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    _initialController.forward();
+
+    // Segundo controlador y animación (90% a 100%)
+    _completionController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2), // Duración de la segunda animación
+    );
+
+    _completionAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(_completionController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    // Simulamos que la aplicación termina de cargar después de cierto tiempo
+    Future.delayed(Duration(seconds: 6), () {
+      _isCompleted = true;
+      _completionController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _initialController.dispose();
+    _completionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Image.asset('assets/logo.png', width: 100, height: 100), // Asegúrate de tener esta imagen en tu carpeta assets
+            SizedBox(
+              width: 120,
+              height: 120,
+              child: CircularProgressIndicator(
+                value: _isCompleted ? _completionAnimation.value : _initialAnimation.value,
+                strokeWidth: 8.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
